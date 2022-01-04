@@ -1,0 +1,12 @@
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "requirePragma": false,
+  "proseWrap": "always",
+  "quoteProps": "as-needed",
+  "parser": "typescript",
+  "endOfLine": "lf"
+}

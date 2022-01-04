@@ -1,0 +1,11 @@
+# http://editorconfig.org
+root = true
+
+[*.{ts, tsc}]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+
+[Makefile]
+indent_style = tab
