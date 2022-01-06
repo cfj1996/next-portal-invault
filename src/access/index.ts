@@ -14,9 +14,9 @@ export const fallback = function (): Promise<{ auto: 'admin' | 'user' }> {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
-        auto: 'admin',
+        auto: 'user',
       });
-    }, 2500);
+    }, 1500);
   });
 };
 const useAccess = function (): IAccessMap {

@@ -5,8 +5,12 @@
  * @description:
  */
 import React from 'react';
+import { matchPath, useParams } from 'react-router-dom';
 
 const A1 = function () {
-  return <div>A1 页面</div>;
+  const data = matchPath('admin/A1/:id', location.pathname);
+  console.log('data', data);
+  const params = useParams<{ id: string }>();
+  return <div>A1 页面 {params.id}</div>;
 };
 export default A1;

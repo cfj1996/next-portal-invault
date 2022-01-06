@@ -6,7 +6,8 @@
   "ignorePatterns": [
     "node_modules/**/*",
     "config/**/*",
-    "scripts/**/*"
+    "scripts/**/*",
+    "src/react-app-env.d.ts"
   ],
   "extends": [
     "eslint:recommended",
