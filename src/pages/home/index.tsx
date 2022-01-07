@@ -6,6 +6,7 @@
  */
 import React from 'react';
 import { homeLoader } from 'src/dataLoader/home';
+import Link from 'src/components/Link';
 
 const [loader, useLoaderData] = homeLoader();
 const Home = function () {
@@ -24,6 +25,9 @@ const Home = function () {
                 {item.last_name}
               </p>
               <p>email: {item.email}</p>
+              <Link to={`/user/${item.id}`} prefetch>
+                查看详情
+              </Link>
               <hr />
             </div>
           ))}

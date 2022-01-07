@@ -21,7 +21,7 @@ const HomeLayout = function () {
             </Link>
           </li>
           <li>
-            <Link to={'/user'} prefetch>
+            <Link to={'/user/1'} prefetch>
               user
             </Link>
           </li>

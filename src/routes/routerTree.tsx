@@ -9,7 +9,6 @@ import React, { Fragment, lazy, useEffect } from 'react';
 import type { RouteOptions } from '.';
 import useAccess from '../access';
 import Error403 from '../pages/error/403';
-import pages from 'src/pages';
 import type { RouteMatch } from 'react-router-dom';
 
 export type LoaderParams = RouteMatch & { searchParams: URLSearchParams };
@@ -33,15 +32,15 @@ export interface Router extends RouteOptions {
 
 export function routerTree(options: RouteOptions[]): Router[] {
   return options.map((option) => {
-    const { children, name, ...output } = option;
+    const { children, ...output } = option;
     const data: Router = {
       ...output,
       children: children?.length ? routerTree(children) : undefined,
       element: <RouteComponent {...option} component={Component} />,
       fetch: () => {
-        if (name && !data.isLoad && !data.asyncComponent) {
+        if (output.component.fetch && !data.isLoad && !data.asyncComponent) {
           data.isLoad = true;
-          return pages[name]().then((res) => {
+          return output.component.fetch().then((res) => {
             const component = res.default as LoaderComponentType;
             data.isLoad = false;
             data.asyncComponent = component;

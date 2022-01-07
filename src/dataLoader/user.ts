@@ -29,7 +29,8 @@ export const userLoader = function (): DataLoader<string, { users: SWRResponse<U
     };
   };
   const loader = function (params: LoaderParams) {
-    const id = params.searchParams.get('id') || '1';
+    const id = params.params?.id as string;
+    console.log('userLoader id', id);
     mutate(KEY(id), fetcher(...KEY(id))).then((res) => res);
   };
   return [loader, useLoaderData];

@@ -4,7 +4,6 @@
  * @date: 2022/1/5
  * @description:
  */
-import { lazy } from 'react';
 import type { RouteObject, To } from 'react-router-dom';
 import {
   createSearchParams,
@@ -14,14 +13,11 @@ import {
   useRoutes,
 } from 'react-router-dom';
 import type { IAccessMap } from 'src/access';
-import type { LoaderComponentType, Router } from './routerTree';
+import type { FetchComponentType, Router } from './routerTree';
 import { loaderLazy, routerTree } from './routerTree';
 import HomeLayout from '../layouts/homeLayout';
-import type { Pages } from 'src/pages';
 
 export interface RouteOptions extends Omit<RouteObject, 'element' | 'children'> {
-  // 与page/index 导出的对象的key值对应
-  name?: keyof Pages;
   // 页面title
   title?: string;
   // 角色权限
@@ -29,7 +25,7 @@ export interface RouteOptions extends Omit<RouteObject, 'element' | 'children'> 
   // 高阶组件拦截
   wrappers?: React.ComponentType[];
   // 渲染组件
-  component: LoaderComponentType;
+  component: FetchComponentType;
   // 嵌套路由
   children?: RouteOptions[];
 }
@@ -40,34 +36,29 @@ const routeOptions: RouteOptions[] = [
       {
         index: true,
         title: 'home',
-        name: 'home',
         component: loaderLazy(() => import('src/pages/home')),
       },
       {
-        path: 'user',
+        path: 'user/:id',
         // access: 'user',
         title: 'user',
-        name: 'user',
-        component: lazy(() => import('src/pages/user')),
+        component: loaderLazy(() => import('src/pages/user')),
       },
       {
         path: 'admin',
         // access: 'admin',
         title: 'admin',
-        name: 'admin',
-        component: lazy(() => import('src/pages/admin')),
+        component: loaderLazy(() => import('src/pages/admin')),
         children: [
           {
             path: 'A1/:id',
-            name: 'A1',
             title: 'A1',
-            component: lazy(() => import('src/pages/admin/A1')),
+            component: loaderLazy(() => import('src/pages/admin/A1')),
           },
           {
             path: 'A2',
-            name: 'A2',
             title: 'A2',
-            component: lazy(() => import('src/pages/admin/A2')),
+            component: loaderLazy(() => import('src/pages/admin/A2')),
           },
         ],
       },

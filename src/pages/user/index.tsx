@@ -6,10 +6,12 @@
  */
 import React from 'react';
 import { userLoader } from 'src/dataLoader/user';
+import { useParams } from 'react-router-dom';
 
 const [loader, useLoaderData] = userLoader();
 const Index = function () {
-  const { users } = useLoaderData('1');
+  const params = useParams<{ id: string }>();
+  const { users } = useLoaderData(params.id as string);
   return (
     <div>
       <p>user 请求id 为{users.data?.data.id}的用户</p>
