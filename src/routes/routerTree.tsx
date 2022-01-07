@@ -4,19 +4,31 @@
  * @date: 2022/1/5
  * @description:
  */
-import type { ComponentType } from 'react';
-import React, { Fragment, useEffect } from 'react';
+import type { ComponentType, ReactElement } from 'react';
+import React, { Fragment, lazy, useEffect } from 'react';
 import type { RouteOptions } from '.';
 import useAccess from '../access';
 import Error403 from '../pages/error/403';
 import pages from 'src/pages';
+import type { RouteMatch } from 'react-router-dom';
+
+export type LoaderParams = RouteMatch & { searchParams: URLSearchParams };
+
+export type Loader = (routeMatch: LoaderParams) => void;
+
+export type LoaderComponentType = ComponentType & { loader?: Loader };
+
+export type Fetch = () => Promise<{ default: LoaderComponentType }>;
+
+export type FetchComponentType = ComponentType & { fetch?: Fetch };
 
 export interface Router extends RouteOptions {
-  preFetch: () => Promise<{ default: ComponentType | null }>;
+  fetch: Fetch;
+  loader?: Loader;
   children?: Router[];
   isLoad?: boolean;
   element: React.ReactNode;
-  asyncComponent?: ComponentType;
+  asyncComponent?: LoaderComponentType;
 }
 
 export function routerTree(options: RouteOptions[]): Router[] {
@@ -26,19 +38,18 @@ export function routerTree(options: RouteOptions[]): Router[] {
       ...output,
       children: children?.length ? routerTree(children) : undefined,
       element: <RouteComponent {...option} component={Component} />,
-      preFetch: () => {
+      fetch: () => {
         if (name && !data.isLoad && !data.asyncComponent) {
           data.isLoad = true;
           return pages[name]().then((res) => {
+            const component = res.default as LoaderComponentType;
             data.isLoad = false;
-            data.asyncComponent = res.default;
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            data.asyncComponent?.preFetchData?.();
+            data.asyncComponent = component;
+            data.loader = component.loader;
             return res;
           });
         } else {
-          return Promise.resolve({ default: null });
+          return Promise.resolve({ default: Fragment });
         }
       },
     };
@@ -66,12 +77,18 @@ function RouteComponent(props: Pick<RouteOptions, 'component' | 'title' | 'acces
   }
   return <Component />;
 }
-function wrapper(arr: React.ComponentType[] = [], RootCom?: ComponentType) {
-  const Com = RootCom || Fragment;
+function wrapper(arr: React.ComponentType[] = [], RootCom?: ComponentType): ReactElement {
+  const type = RootCom || Fragment;
   let children = null;
   if (arr.length > 0) {
     const C = arr.shift();
     children = wrapper(arr, C);
   }
-  return <Com>{children}</Com>;
+  return React.createElement(type, {}, children);
 }
+
+export const loaderLazy: (fn: Fetch) => FetchComponentType = function (fn) {
+  const component = lazy(fn) as FetchComponentType;
+  component.fetch = fn;
+  return component;
+};
